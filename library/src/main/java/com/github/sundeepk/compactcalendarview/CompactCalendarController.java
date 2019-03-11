@@ -1,6 +1,5 @@
 package com.github.sundeepk.compactcalendarview;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -17,7 +16,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -253,10 +251,8 @@ class CompactCalendarController {
 
 	private void setCalenderToFirstDayOfMonth(Calendar calendarWithFirstDayOfMonth, Date currentDate, int scrollOffset,
 			int monthOffset) {
-		if (scrollOffset < 2) {
-			setMonthOffset(calendarWithFirstDayOfMonth, currentDate, scrollOffset, monthOffset);
-			calendarWithFirstDayOfMonth.set(Calendar.DAY_OF_MONTH, 1);
-		}
+		setMonthOffset(calendarWithFirstDayOfMonth, currentDate, scrollOffset, monthOffset);
+		calendarWithFirstDayOfMonth.set(Calendar.DAY_OF_MONTH, 1);
 	}
 
 	private void setMonthOffset(Calendar calendarWithFirstDayOfMonth, Date currentDate, int scrollOffset,
@@ -579,11 +575,9 @@ class CompactCalendarController {
 				scroller.abortAnimation();
 			}
 			isSmoothScrolling = false;
-		}
-		else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
 			velocityTracker.addMovement(event);
 			velocityTracker.computeCurrentVelocity(500);
-
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			handleHorizontalScrolling();
 			velocityTracker.recycle();
@@ -960,10 +954,9 @@ class CompactCalendarController {
 
 		if (eventList.size() > 0) {
 			for (int i = 0; i < maximumMonthDay; i++) {
-				daysWithEvent[i] = hasEventOnDay(eventList, i+1);
+				daysWithEvent[i] = hasEventOnDay(eventList, i + 1);
 			}
 		}
-
 
 		tempPreviousMonthCalendar.setTimeInMillis(monthToDrawCalender.getTimeInMillis());
 		tempPreviousMonthCalendar.add(Calendar.MONTH, -1);

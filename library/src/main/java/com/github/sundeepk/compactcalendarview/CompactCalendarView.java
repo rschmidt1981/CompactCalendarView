@@ -13,7 +13,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -78,15 +77,14 @@ public class CompactCalendarView extends View {
 				public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 					if (horizontalScrollEnabled && mMaxMonths != 0) {
 						int scrolledSoFar = compactCalendarController.monthsScrolledSoFar();
-						Log.d("onScroll", String.format("month: %d\tdistanceX: %.2f", scrolledSoFar, distanceX));
 						if (Math.abs(distanceX) > 0) {
 							boolean handleScroll =
+									// check if we are at the end or middle
 									(scrolledSoFar > 0 && (scrolledSoFar < mMaxMonths || distanceX < 0)) ||
+											// if we are at the front
 											(scrolledSoFar <= 0 && distanceX > 0);
-
 							if (handleScroll) {
 								getParent().requestDisallowInterceptTouchEvent(true);
-								Log.d("Triggered", "onScroll");
 								compactCalendarController.onScroll(e1, e2, distanceX, distanceY);
 								invalidate();
 							}
@@ -452,29 +450,23 @@ public class CompactCalendarView extends View {
 
 			tracker.addMovement(event);
 			tracker.computeCurrentVelocity(500);
-
-			Log.d("onTouchEvent",
-					String.format("months: %d\tVelo: %.2f", compactCalendarController.monthsScrolledSoFar(),
-							tracker.getXVelocity()));
-
 			int monthsScrolled = compactCalendarController.monthsScrolledSoFar();
 
-
-			boolean handleTouch = (monthsScrolled > 0 && (monthsScrolled < mMaxMonths || tracker.getXVelocity() > 0) ||
-					(monthsScrolled <= 0 && (tracker.getXVelocity() < 0) ||
-							(tracker.getXVelocity() == 0 && event.getAction() != MotionEvent.ACTION_MOVE)));
+			boolean handleTouch =
+					// check if we are at the end or middle
+					(monthsScrolled > 0 && (monthsScrolled < mMaxMonths || tracker.getXVelocity() > 0) ||
+							// check if we are at the front
+							(monthsScrolled <= 0 && (tracker.getXVelocity() < 0) ||
+									(tracker.getXVelocity() == 0 && event.getAction() != MotionEvent.ACTION_MOVE)));
 
 			if (handleTouch) {
-				Log.d("Triggered", "onTouch");
 				compactCalendarController.onTouch(event);
 				invalidate();
 			}
 
-
 			tracker.recycle();
 			tracker.clear();
 		}
-
 
 		// on touch action finished (CANCEL or UP), we re-allow the parent container to intercept touch events (scroll inside ViewPager + RecyclerView issue #82)
 		if ((event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) &&
