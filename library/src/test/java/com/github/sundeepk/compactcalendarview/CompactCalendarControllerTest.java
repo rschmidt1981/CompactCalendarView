@@ -351,28 +351,6 @@ public class CompactCalendarControllerTest {
     }
 
     @Test
-    public void testItDrawsMultipleEventDaysOnCalendarWithPlusIndicator(){
-        //Sun, 07 Jun 2015 18:20:51 GMT
-        //get 120 events in total but only draw 3 event indicators per a day
-        int numberOfDaysWithEvents = 30;
-        List<Events> events = getDayEventWithMultipleEventsPerDay(0, numberOfDaysWithEvents, 1433701251000L);
-        when(eventsContainer.getEventsForMonthAndYear(5, 2015)).thenReturn(events);
-        when(calendar.get(Calendar.MONTH)).thenReturn(5);
-        when(calendar.get(Calendar.YEAR)).thenReturn(2015);
-
-        underTest.shouldDrawIndicatorsBelowSelectedDays(true); // always draw events, even on current day
-        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
-        underTest.drawEvents(canvas, calendar, 0);
-
-        //draw 2 events per day because we don't draw more than 3 indicators
-        verify(canvas, times(numberOfDaysWithEvents * 2)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
-
-        //draw event indicator with lines
-        // 2 calls for each plus event indicator since it takes 2 draw calls to make a plus sign
-        verify(canvas, times(numberOfDaysWithEvents * 2)).drawLine(anyFloat(), anyFloat(), anyFloat(), anyFloat(), eq(paint));
-    }
-
-    @Test
     public void testItDrawsEventDaysOnCalendarForCurrentMonth(){
         Calendar todayCalendar = Calendar.getInstance();
         int numberOfDaysInMonth = todayCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
