@@ -1,5 +1,8 @@
 package com.github.sundeepk.compactcalendarview.domain;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.support.annotation.Nullable;
 
 public class Event {
@@ -8,15 +11,25 @@ public class Event {
     private long timeInMillis;
     private Object data;
 
+    private int day;
+
     public Event(int color, long timeInMillis) {
         this.color = color;
         this.timeInMillis = timeInMillis;
+
+        Date date = new Date();
+        date.setTime(timeInMillis);
+        day = Integer.parseInt(new SimpleDateFormat("dd").format(date));
     }
 
     public Event(int color, long timeInMillis, Object data) {
         this.color = color;
         this.timeInMillis = timeInMillis;
         this.data = data;
+
+        Date date = new Date();
+        date.setTime(timeInMillis);
+        day = Integer.parseInt(new SimpleDateFormat("dd").format(date));
     }
 
     public int getColor() {
@@ -25,6 +38,10 @@ public class Event {
 
     public long getTimeInMillis() {
         return timeInMillis;
+    }
+
+    public int getDay() {
+        return day;
     }
 
     @Nullable
