@@ -874,15 +874,20 @@ class CompactCalendarController {
 			}
 		}
 	}
-
+	
 	private void drawMultipleEvents(Canvas canvas, float center, float yPosition, List<Event> eventsList) {
-		int itemCount = eventsList.size();
+		int itemCount;
+		if (eventsList.size() > 4) {
+			itemCount = 4;
+		} else {
+			itemCount = eventsList.size();
+		}
 		float itemSize = smallIndicatorRadius + xIndicatorOffset;
 		float startingPos = center - ((itemCount * itemSize) / 2) + smallIndicatorRadius;
 
 		dayPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-		for (int i = 0; i < eventsList.size(); i++) {
+		for (int i = 0; i < itemCount; i++) {
 			Event event = eventsList.get(i);
 
 			dayPaint.setColor(event.getColor());
