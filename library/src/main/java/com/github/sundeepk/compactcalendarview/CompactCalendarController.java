@@ -1,11 +1,5 @@
 package com.github.sundeepk.compactcalendarview;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -23,6 +17,14 @@ import android.view.ViewConfiguration;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.github.sundeepk.compactcalendarview.domain.EventDay;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarViewListener;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.FILL_LARGE_INDICATOR;
@@ -629,7 +631,7 @@ class CompactCalendarController {
 		}
 	}
 
-	private void scrollNextMonth() {
+	public void scrollNextMonth() {
 		lastAutoScrollFromFling = System.currentTimeMillis();
 		monthsScrolledSoFar = monthsScrolledSoFar - 1;
 		performScroll();
@@ -637,7 +639,7 @@ class CompactCalendarController {
 		performMonthScrollCallback();
 	}
 
-	private void scrollPreviousMonth() {
+	public void scrollPreviousMonth() {
 		lastAutoScrollFromFling = System.currentTimeMillis();
 		monthsScrolledSoFar = monthsScrolledSoFar + 1;
 		performScroll();
@@ -849,12 +851,23 @@ class CompactCalendarController {
 				if (shouldDrawIndicatorsBelowSelectedDays ||
 						(!shouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay) ||
 						animationStatus == EXPOSE_CALENDAR_ANIMATION) {
+
+					Event event = eventsList.get(0);
+
 					if (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
 						if (!eventsList.isEmpty()) {
-							Event event = eventsList.get(0);
 							drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
 						}
 					} else {
+						List<Event> tmpEventList = new ArrayList<>(events.getEvents());
+						for (Event entry : tmpEventList) {
+							if (entry instanceof EventDay) {
+								drawDayCircleIndicator(FILL_LARGE_INDICATOR, canvas, xPosition, yPosition, entry.getColor());
+								tmpEventList.remove(entry);
+								break;
+							}
+						}
+
 						yPosition += indicatorOffset;
 						// offset event indicators to draw below selected day indicators
 						// this makes sure that they do no overlap
@@ -862,19 +875,20 @@ class CompactCalendarController {
 							yPosition += indicatorOffset;
 						}*/
 
-						if (eventsList.size() >= 3) {
-							drawMultipleEvents(canvas, xPosition, yPosition, eventsList);
-						} else if (eventsList.size() == 2) {
-							drawTwoEvents(canvas, xPosition, yPosition, eventsList);
-						} else if (eventsList.size() == 1) {
-							drawSingleEvent(canvas, xPosition, yPosition, eventsList);
+
+						if (tmpEventList.size() >= 3) {
+							drawMultipleEvents(canvas, xPosition, yPosition, tmpEventList);
+						} else if (tmpEventList.size() == 2) {
+							drawTwoEvents(canvas, xPosition, yPosition, tmpEventList);
+						} else if (tmpEventList.size() == 1) {
+							drawSingleEvent(canvas, xPosition, yPosition, tmpEventList);
 						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	private void drawMultipleEvents(Canvas canvas, float center, float yPosition, List<Event> eventsList) {
 		int itemCount;
 		if (eventsList.size() > 4) {

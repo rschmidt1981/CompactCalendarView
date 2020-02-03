@@ -1,11 +1,5 @@
 package com.github.sundeepk.compactcalendarview;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -20,6 +14,12 @@ import android.view.View;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.Event;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class CompactCalendarView extends View {
 
@@ -408,6 +408,20 @@ public class CompactCalendarView extends View {
 	 */
 	public void scrollLeft() {
 		compactCalendarController.scrollLeft();
+		invalidate();
+	}
+
+	public void scrollRightSmooth() {
+		compactCalendarController.scrollNextMonth();
+		invalidate();
+	}
+
+	/**
+	 * Moves the calendar to the left. This will show the previous month when {@link #setIsRtl(boolean)} is set to
+	 * false. If in rtl mode, it will show the next month.
+	 */
+	public void scrollLeftSmooth() {
+		compactCalendarController.scrollPreviousMonth();
 		invalidate();
 	}
 
